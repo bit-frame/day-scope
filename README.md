@@ -1,2 +1,2 @@
 # DayScope
-[![Version](https://img.shields.io/badge/DayScope-2024.12.08-blue)](https://example.com)
+[![Version](https://img.shields.io/badge/DayScope-12.2024_Build_1-blue)](https://example.com)
