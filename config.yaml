@@ -8,3 +8,8 @@ website:
 administrator:
   user: admin
   password: dayscopeadmin
+
+webhooks:
+  url: YOUR_WEBHOOK_URL
+  logs:
+    sendStartup: true

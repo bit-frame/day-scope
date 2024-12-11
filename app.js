@@ -9,13 +9,16 @@ const cors = require('cors');
 const configFile = fs.readFileSync('config.yaml', 'utf8');
 const config = yaml.parse(configFile);
 
+const sendWebhook = require('./webhook')
+
 const API_TOKEN = process.env.API_KEY;
 
-const { website, administrator, api: apiConfig, version, build } = config;
+const { website, administrator, api: apiConfig, version, build} = config;
+const sendStartup = config.webhooks.logs.sendStartup
 const httpUrl = `http://${website.url}:${website.port}`;
 
 const corsOptions = {
-    origin: [httpUrl],
+    origin: [httpUrl, `http://localhost:${website.port}`],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'api_token']
 };
@@ -46,4 +49,22 @@ app.use((req, res) => {
 
 app.listen(port, '0.0.0.0', () => {
     console.log(`[INFO] DayScope Server ${version} Build ${build}\n> Access at ${website.url}:${port}`);
+
+    if (sendStartup == true) {
+        const notificationData = {
+            author: 'DayScope Info',
+            message: `DayScope has just booted up.\nAccess DayScope at **${website.url}:${port}**`,
+            color: '00FF00'
+        };
+        
+        sendWebhook(notificationData)
+            .then(() => {
+                console.log('[INFO] Startup notification sent');
+        })
+            .catch((err) => {
+                console.error('[ERROR] Failed to send Startup notification: ', err);
+        });
+    } else {
+        console.log('[INFO] Failed to send Startup notification: Disabled')
+    }
 });
