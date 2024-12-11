@@ -1,4 +1,3 @@
-<!-- public/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,8 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DayScope</title>
 </head>
-<body>
-    <h1>Hello from DayScope!</h1>
-    <p>This page is served from the DayScope API! You are currently running Build 2</p>
-</body>
+<script>
+    function redirectToLogin() {
+        window.location.href = "/login";
+    }
+
+    function redirectToDash() {
+        window.location.href = "/dashboard";
+    }
+
+    if (localStorage.getItem("DayScopeToken")) {
+        redirectToDash();
+    } else {
+        redirectToLogin();
+    }
+
+    
+</script>
 </html>
