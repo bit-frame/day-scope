@@ -3,7 +3,7 @@ const router = express.Router();
 
 router.all(['/v1/api/status', '/v1/api/data'], (req, res, next) => {
 
-    if (req.method !== 'GET') {
+    if (req.method !== 'POST') {
         return res.status(403).json({ message: 'Method Not Allowed' });
     }
 
