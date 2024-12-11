@@ -2,7 +2,7 @@ version: v2024.12
 build: 1
 
 website:
-  url: ubuntulinus.local
+  url: YOUR_DAYSCOPE_URL
   port: 3000
 
 administrator:
