@@ -1,18 +1,17 @@
 const express = require('express');
-const path = require('path');
+const path = require('path')
+const api = require('./routes/api')
 
 const app = express();
 const port = 3000;
 
-// Serve static files from the "public" folder
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(api)
 
-// Set up a route to serve the index.html
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'home.html'));
 });
 
-// Make the server listen on all network interfaces
 app.listen(port, '0.0.0.0', () => {
     console.log(`Server running at http://0.0.0.0:${port}`);
 });
