@@ -10,7 +10,7 @@ administrator:
   password: dayscopeadmin
 
 webhooks:
-  url: https://nameless-sound-ff50.bit-frame.workers.dev/
+  url: YOUR_WEBHOOK_URL
   logs:
     sendStartup: false
     info: false
