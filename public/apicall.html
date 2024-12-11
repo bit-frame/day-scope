@@ -18,7 +18,7 @@
         // Function to call the status API endpoint
         const getStatus = async () => {
             try {
-                const response = await axios.get('http://localhost:3000/v1/api/status', {
+                const response = await axios.get('http://192.168.8.215:3000/v1/api/status', {
                     headers: {
                         'api_token': apiKey
                     }

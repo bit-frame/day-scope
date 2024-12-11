@@ -1,0 +1,10 @@
+version: v2024.12
+build: 1
+
+website:
+  url: ubuntulinus.local
+  port: 3000
+
+administrator:
+  user: admin
+  password: dayscopeadmin
