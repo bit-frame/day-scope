@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/bit-frame/DayScope#readme",
   "dependencies": {
+    "dotenv": "^16.4.7",
     "sqlite3": "^5.1.7"
   }
 }
