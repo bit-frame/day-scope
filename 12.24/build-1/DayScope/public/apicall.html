@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Call with Axios</title>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <h1>API Call with Axios</h1>
+    <button id="getStatusBtn">Get Status</button>
+    <div id="response"></div>
+
+    <script>
+        // Your API key
+        const apiKey = 'l1nu3k@ngd@ysc0p3ap12024';  // Replace with your actual API key
+
+        // Function to call the status API endpoint
+        const getStatus = async () => {
+            try {
+                const response = await axios.get('http://localhost:3000/v1/api/status', {
+                    headers: {
+                        'api_token': apiKey
+                    }
+                });
+                document.getElementById('response').textContent = JSON.stringify(response.data);
+            } catch (error) {
+                document.getElementById('response').textContent = 'Error: ' + error.response.data.message;
+            }
+        };
+
+        // Attach the function to the button click
+        document.getElementById('getStatusBtn').addEventListener('click', getStatus);
+    </script>
+</body>
+</html>
