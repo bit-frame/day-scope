@@ -3,127 +3,170 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Login to DayScope</title>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
     <style>
-        /* General reset for margin and padding */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Arial', sans-serif;
-            background-color: #f2f2f2;
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            margin: 0;
+            overflow: hidden;
         }
-
-        /* Center the login box */
-        .login-container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
+            background-color: #f5f5f5;
+            z-index: 1;
         }
-
-        .login-box {
-            width: 300px;
-            padding: 40px;
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
+        .login-container {
+            position: relative;
+            z-index: 10;
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 24px;
+            background: rgba( 255, 255, 255, 0 );
+            box-shadow: 0 8px 32px 0 rgba(65, 1, 155, 0.37);
+            backdrop-filter: blur( 3.5px );
+            -webkit-backdrop-filter: blur( 3.5px );
+            border-radius: 10px;
+            border: 1px solid rgba( 255, 255, 255, 0.18 );
+        }
+        .login-container h1 {
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
             color: #333;
         }
-
-        .textbox {
-            margin-bottom: 20px;
+        .form-group {
+            margin-bottom: 1rem;
+            text-align: left;
         }
-
-        .textbox input {
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .form-group input {
             width: 100%;
-            padding: 10px;
-            font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            background-color: #f9f9f9;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: border-color 0.5s ease;
+        }
+        .form-group input:focus {
+            border-color: #6200ea;
             outline: none;
-            transition: border-color 0.3s ease;
+            box-shadow: 0 0 4px rgba(98, 0, 234, 0.3);
         }
-
-        .textbox input:focus {
-            border-color: #5b9bff;
-        }
-
-        .btn {
+        .login-button {
             width: 100%;
-            padding: 10px;
-            background-color: #5b9bff;
+            padding: 0.8rem;
+            background-color: #6200ea;
             color: #fff;
             border: none;
-            border-radius: 5px;
-            font-size: 18px;
+            border-radius: 4px;
+            font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            transition: background-color 0.3s;
         }
-
-        .btn:hover {
-            background-color: #4a8fd2;
+        .login-button:hover {
+            background-color: #3700b3;
         }
-
-        .signup-link {
-            text-align: center;
-            margin-top: 10px;
-            font-size: 14px;
-            color: #666;
-        }
-
-        .signup-link a {
-            color: #5b9bff;
-            text-decoration: none;
-        }
-
-        .signup-link a:hover {
-            text-decoration: underline;
+        .error {
+            color: red;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
         }
     </style>
 </head>
 <body>
+    <div id="particles-js"></div>
+
     <div class="login-container">
-        <div class="login-box">
-            <h2>Login</h2>
-            <form id="loginForm" action="#" method="POST">
-                <div class="textbox">
-                    <input type="text" id="username" placeholder="Username" name="username" required>
-                </div>
-                <div class="textbox">
-                    <input type="password" id="password" placeholder="Password" name="password" required>
-                </div>
-                <button type="submit" class="btn">Login</button>
-                <p class="signup-link">Don't have an account? <a href="#">Sign Up</a></p>
-            </form>
-        </div>
+        <h1>DayScope</h1>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username">
+                <label for="username">Password</label>
+                <input type="password" id="password" name="password">
+            </div>
+            <button type="submit" class="login-button">Login</button>
+            <div class="error" id="errorMessage"></div>
+        </form>
     </div>
 
     <script>
-        function GetCredentials(){
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
-            
-            return { username, password }
-        }
-        document.getElementById('loginForm').addEventListener('submit', function(event) {
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { 
+                    value: 80, 
+                },
+                color: { value: "#6200ea" },
+                shape: {
+                    type: "circle",
+                },
+                opacity: {
+                    value: 0.4,
+                },
+                size: {
+                    value: 3,
+                },
+                line_linked: {
+                    enable: true,
+                    distance: 140, 
+                    color: "#6200ea",
+                    opacity: 0.5,
+                    width: 1.5,
+                },
+                move: {
+                    enable: true,
+                    speed: 1.2,
+                    direction: "none",
+                    random: false,
+                    straight: false,
+                }
+            },
+            interactivity: {
+                events: {
+                    onhover: {
+                        enable: false,
+                    },
+                    onclick: {
+                        enable: false,
+                    }
+                },
+            },
+            retina_detect: true,
+        });
+
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+
+        loginForm.addEventListener('submit', function(event) {
             event.preventDefault();
-            const credentials = GetCredentials()
-            console.log(credentials.username, credentials.password)
+
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (username && password) {
+                alert(`Username: ${username}, Password: ${password}`);
+                errorMessage.textContent = '';
+            } else {
+                errorMessage.textContent = 'Please enter both a username and password.';
+            }
         });
     </script>
 </body>
