@@ -2,7 +2,7 @@ version: v2024.12
 build: 1
 
 website:
-  url: YOUR_DAYSCOPE_URL
+  url: ubuntulinus.local
   port: 3000
 
 administrator:
@@ -10,7 +10,7 @@ administrator:
   password: dayscopeadmin
 
 webhooks:
-  url: YOUR_WEBHOOK_URL
+  url: https://nameless-sound-ff50.bit-frame.workers.dev/
   logs:
     sendStartup: false
     info: false
