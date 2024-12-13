@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Android Style Toast Notification</title>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        /* Toast Notification Style */
+        .notification {
+            position: fixed;
+            top: -80px; /* Start position above the screen */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333; /* Dark background for the toast */
+            color: white;
+            padding: 14px 24px;
+            border-radius: 25px; /* Rounded corners for Android-like toast */
+            font-size: 16px;
+            opacity: 0;
+            visibility: hidden;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            transition: top 0.5s ease, opacity 0.5s ease, visibility 0s linear 0.5s;
+            z-index: 9999;
+        }
+
+        .notification.show {
+            visibility: visible;
+            top: 20px; /* Slide into view */
+            opacity: 1;
+            transition: top 0.5s ease, opacity 0.5s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast Notification Element -->
+    <div id="notification" class="notification">
+        This is an Android-style toast notification!
+    </div>
+
+    <script>
+        // Function to show the toast notification with a custom message
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message; // Set the custom message
+            notification.classList.add('show'); // Add the 'show' class to trigger fade-in and slide-down
+
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.classList.remove('show'); // Remove the 'show' class to trigger fade-out
+            }, 5000);
+        }
+
+        // Example: Call the function to show a custom toast notification with a message
+        // You can call showNotification('Your custom message') anywhere in your code
+    </script>
+
+    <!-- Example button to trigger the toast notification -->
+    <button onclick="showNotification('Failed to connect to server. Please try again later.')">Show Toast Notification</button>
+
+</body>
+</html>
