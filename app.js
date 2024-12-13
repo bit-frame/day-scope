@@ -8,6 +8,17 @@ const cors = require('cors');
 const sendWebhook = require('./webhook');
 const database = require('./database/db');
 const { create } = require('domain');
+const connection = require('./database/db')
+
+function editDatabase(sqlQuery) {
+    connection.query(sqlQuery, (err, result) => {
+        if (err) {
+            console.error('[ERROR] Query failed:', err.message);
+            throw err;
+        }
+        console.log('[INFO] Query completed:', result);
+    });
+}
 
 const configFile = fs.readFileSync('config.yaml', 'utf8');
 const config = yaml.parse(configFile);
@@ -103,6 +114,10 @@ app.listen(port, '0.0.0.0', () => {
             });
         }
     });
+
+    const selectAllFromSystemInfo = 'SELECT * FROM system_info;';
+    editDatabase(selectAllFromSystemInfo);
+
 
     if (sendStartup === true) {
         const notificationData = {
