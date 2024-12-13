@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DayScope Onboarding</title>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+        #particles-js {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f5f5f5;
+            z-index: 1;
+        }
+        .container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 10;
+            width: 100%;
+            max-width: 400px;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease, transform 0.5s ease;
+        }
+        .container.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) translateX(0);
+        }
+        .container.swipe-left {
+            transform: translate(-50%, -50%) translateX(-100%);
+        }
+        .container.swipe-right {
+            transform: translate(-50%, -50%) translateX(100%);
+        }
+        .container h1 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        .container button {
+            padding: 0.8rem 1.5rem;
+            font-size: 1rem;
+            background-color: #6200ea;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .container button:hover {
+            background-color: #3700b3;
+        }
+        .input {
+            width: calc(100% - 2rem);
+            height: 45px;
+            line-height: 30px;
+            padding: 0 1rem;
+            margin-bottom: 1rem;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            outline: none;
+            background-color: #fff;
+            transition: 0.3s ease;
+            color: #333;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .input:hover {
+    border-color: #6200ea; /* Purple border on hover */
+    box-shadow: 0 0 10px rgba(98, 0, 234, 0.3); /* Glow effect on hover */
+}
+        .input:focus {
+            border-color: #6200ea;
+            background-color: #f5f5ff;
+            box-shadow: 0 0 10px rgba(98, 0, 234, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <!-- Initial Welcome Prompt -->
+    <div class="container active" id="prompt">
+        <h1>Welcome to DayScope</h1>
+        <button onclick="showLogin()">Get Started</button>
+    </div>
+
+    <!-- Login Setup Page -->
+    <div class="container" id="login">
+        <h1>Onboarding</h1>
+        <form id="loginForm" onsubmit="showSetupComplete(event)">
+            <input class="input" type="text" placeholder="School Name" required>
+            <input class="input" type="text" placeholder="New Admin Username" required>
+            <input class="input" type="password" placeholder="New Admin Password" required>
+            <input class="input" type="password" placeholder="Confirm Password" required>
+            <button type="submit">Finish Setup</button>
+        </form>
+    </div>
+
+    <!-- Setup Complete Page -->
+    <div class="container" id="setupComplete">
+        <h1>Onboarding Complete</h1>
+        <p>To complete setup, log in using your admin account.</p>
+        <button onclick="window.location.href='/login'">Go to Login</button>
+    </div>
+
+    <script>
+        // Initialize particles.js
+        particlesJS('particles-js', {
+            particles: {
+                number: { value: 40 },
+                color: { value: "#6200ea" },
+                shape: { type: "circle" },
+                opacity: { value: 0.4 },
+                size: { value: 3 },
+                line_linked: {
+                    enable: true,
+                    distance: 140,
+                    color: "#6200ea",
+                    opacity: 0.5,
+                    width: 1.5,
+                },
+                move: { enable: true, speed: 1.2, direction: "none" },
+            },
+            interactivity: {
+                events: {
+                    onhover: { enable: false },
+                    onclick: { enable: false },
+                },
+            },
+            retina_detect: true,
+        });
+
+        function activateContainer(showId) {
+            const containers = document.querySelectorAll('.container');
+            containers.forEach(container => {
+                if (container.id === showId) {
+                    container.classList.add('active');
+                } else {
+                    container.classList.remove('active');
+                }
+            });
+        }
+
+        function swipeTransition(fromId, toId, direction) {
+            const fromContainer = document.getElementById(fromId);
+            const toContainer = document.getElementById(toId);
+
+            fromContainer.classList.add(direction === 'left' ? 'swipe-left' : 'swipe-right');
+            fromContainer.addEventListener('transitionend', () => {
+                fromContainer.classList.remove('active', 'swipe-left', 'swipe-right');
+            }, { once: true });
+
+            toContainer.classList.add('active');
+        }
+
+        // Show the login page
+        function showLogin() {
+            swipeTransition('prompt', 'login', 'left');
+        }
+
+        // Show the setup complete page
+        function showSetupComplete(event) {
+            event.preventDefault(); // Prevent form submission
+            swipeTransition('login', 'setupComplete', 'left');
+        }
+    </script>
+</body>
+</html>

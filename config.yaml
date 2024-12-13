@@ -1,5 +1,7 @@
-version: v2024.12
-build: 1
+dayscope:
+  version: v2024.12
+  build: 2
+  api_version: v1.1
 
 website:
   url: ubuntulinus.local

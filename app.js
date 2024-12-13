@@ -7,6 +7,7 @@ const api = require('./routes/api');
 const cors = require('cors');
 const sendWebhook = require('./webhook');
 const database = require('./database/db');
+const { create } = require('domain');
 
 const configFile = fs.readFileSync('config.yaml', 'utf8');
 const config = yaml.parse(configFile);
@@ -14,7 +15,7 @@ const config = yaml.parse(configFile);
 const { administrator } = config;
 const { user: username, password, email } = administrator;
 
-const { website, api: apiConfig, version, build } = config;
+const { website, api: apiConfig, dayscope } = config;
 const sendStartup = config.webhooks.logs.sendStartup;
 const httpUrl = `http://${website.url}:${website.port}`;
 const app = express();
@@ -34,12 +35,13 @@ app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'home.h
 app.get('/home', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'about.html')); });
 app.get('/exp/loading', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'experimental', 'loading.html')); });
 app.get('/api', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'apicall.html')); });
+app.get('/onboarding', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'onboarding', 'onboarding.html')); });
 app.get('/login', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'login.html')); });
 app.get('/dashboard', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'dashboard', 'dashboard.html')); });
 app.use((req, res) => { res.status(404).sendFile(path.join(__dirname, 'public', '404.html')); });
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`[INFO] DayScope Server ${version} Build ${build}\n> Access at ${website.url}:${port}`);
+    console.log(`[INFO] DayScope Server ${dayscope.version} Build ${dayscope.build}\n[INFO] Current api version: ${dayscope.api_version}\n> Access at ${website.url}:${port}`);
 
     const createUsersTable = `
     CREATE TABLE IF NOT EXISTS users (
@@ -52,6 +54,24 @@ app.listen(port, '0.0.0.0', () => {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
     `;
+
+    const createSystemTable = `
+    CREATE TABLE IF NOT EXISTS system_info (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        api_version VARCHAR(10) NOT NULL,
+        release_date DATE NOT NULL,
+        last_update TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        onboarding_status TEXT NOT NULL
+    );
+    `;
+
+    database.query(createSystemTable, (err) => {
+        if (err) {
+            console.error('[ERROR] Failed to create system_info table: ', err.message)
+        } else {
+            console.log('[INFO] System Info table loaded')
+        }
+    })
     
     database.query(createUsersTable, (err) => {
         if (err) {
