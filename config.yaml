@@ -13,9 +13,9 @@ database:
   databaseName: dayscope
 
 administrator:
-  user: admin
-  password: dayscopeadmin
-  email: admin@dayscope.local
+  user: root
+  password: dayscope
+  email: dayscope.root
 
 webhooks:
   url: https://nameless-sound-ff50.bit-frame.workers.dev/
