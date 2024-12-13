@@ -7,6 +7,7 @@ const fs = require('fs');
 const api = require('./routes/api');
 const cors = require('cors');
 const sendWebhook = require('./webhook')
+const database = require('./database/db')
 
 const configFile = fs.readFileSync('config.yaml', 'utf8');
 const config = yaml.parse(configFile);

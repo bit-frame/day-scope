@@ -5,6 +5,11 @@ website:
   url: ubuntulinus.local
   port: 3000
 
+database:
+  user: dayscope-root
+  password: dayscope
+  databaseName: dayscope
+
 administrator:
   user: admin
   password: dayscopeadmin
