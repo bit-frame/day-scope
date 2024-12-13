@@ -32,6 +32,7 @@ app.use(api);
 
 app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'home.html')); });
 app.get('/home', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'about.html')); });
+app.get('/exp/loading', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'experimental', 'loading.html')); });
 app.get('/api', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'apicall.html')); });
 app.get('/login', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'login.html')); });
 app.get('/dashboard', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'dashboard', 'dashboard.html')); });
