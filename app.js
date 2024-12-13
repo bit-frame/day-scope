@@ -10,7 +10,7 @@ const database = require('./database/db');
 const { create } = require('domain');
 const connection = require('./database/db')
 
-function editDatabase(sqlQuery) {
+function queryDatabase(sqlQuery) {
     connection.query(sqlQuery, (err, result) => {
         if (err) {
             console.error('[ERROR] Query failed:', err.message);
@@ -59,6 +59,7 @@ app.listen(port, '0.0.0.0', () => {
     const createUsersTable = `
     CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
+        name VARCHAR(50) NOT NULL UNIQUE,
         username VARCHAR(50) NOT NULL UNIQUE,
         password VARCHAR(255) NOT NULL,
         email VARCHAR(100),
@@ -86,6 +87,12 @@ app.listen(port, '0.0.0.0', () => {
         }
     })
     
+    let username = config.administrator.user;
+    let password = config.administrator.password;
+    let email = config.administrator.email;
+    let role = 'Admin';
+    let name = config.administrator.user;
+
     database.query(createUsersTable, (err) => {
         if (err) {
             console.error('[ERROR] Failed to create users table:', err.message);
@@ -99,14 +106,27 @@ app.listen(port, '0.0.0.0', () => {
                 } else {
                     if (results.length === 0) {
                         const insertUserQuery = `
-                            INSERT INTO users (username, password, email, role)
-                            VALUES (?, ?, ?, ?)
+                            INSERT INTO users (username, password, email, role, name)
+                            VALUES (?, ?, ?, ?, ?)
                         `;
-                        database.query(insertUserQuery, [username, password, email, 'Admin'], (err) => {
+                        database.query(insertUserQuery, [username, password, email, role, name], (err) => {
                             if (err) {
-                                console.error('[ERROR] Failed to insert Admin user:', err.message);
+                                console.error('[ERROR] Failed to insert user:', err.message);
                             } else {
-                                console.log('[INFO] Admin account linked');
+                                console.log('[INFO] User account linked');
+                            }
+                        });
+                    } else {
+                        const updateUserQuery = `
+                            UPDATE users
+                            SET password = ?, email = ?, role = ?, name = ?
+                            WHERE username = ?
+                        `;
+                        database.query(updateUserQuery, [password, email, role, name, username], (err) => {
+                            if (err) {
+                                console.error('[ERROR] Failed to update root credentials:', err.message);
+                            } else {
+                                console.log('[INFO] Root user loaded');
                             }
                         });
                     }
@@ -115,9 +135,8 @@ app.listen(port, '0.0.0.0', () => {
         }
     });
 
-    const selectAllFromSystemInfo = 'SELECT * FROM system_info;';
-    editDatabase(selectAllFromSystemInfo);
-
+    const selectAllFromSystemInfo = 'SELECT * FROM users;';
+    queryDatabase(selectAllFromSystemInfo);
 
     if (sendStartup === true) {
         const notificationData = {
