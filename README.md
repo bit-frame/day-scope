@@ -4,7 +4,7 @@
 # Installing DayScope (Beta)
 To get started, clone this repository to your server
 ```
-https://github.com/bit-frame/day-scope.git
+git clone https://github.com/bit-frame/day-scope.git
 ```
 Navigate to the ``DayScope`` directory and install the required packages
 ```
