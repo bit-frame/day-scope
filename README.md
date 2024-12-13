@@ -20,7 +20,7 @@ sudo mysql
 use mysql;
 create user 'dayscope-root'@'localhost' identified by 'dayscope';
 grant all privileges on *.* to 'dayscope-root'@'localhost';
-alter user 'dayscope-root'@'localhost' identified by 'dayscope';
+ALTER USER 'dayscope-root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'dayscope';
 flush privileges;
 exit;
 ```
