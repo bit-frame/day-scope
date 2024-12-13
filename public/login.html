@@ -31,41 +31,56 @@
             width: 100%;
             max-width: 400px;
             text-align: center;
-            background: rgba( 255, 255, 255, 0 );
+            background: rgba(255, 255, 255, 0);
             box-shadow: 0 8px 32px 0 rgba(65, 1, 155, 0.37);
-            backdrop-filter: blur( 2.5px );
-            -webkit-backdrop-filter: blur( 2.5px );
+            backdrop-filter: blur(1.5px);
+            -webkit-backdrop-filter: blur(1.5px);
             border-radius: 10px;
-            border: 1px solid rgba( 255, 255, 255, 0.18 );
+            border: 1px solid rgba(255, 255, 255, 0.18);
         }
         .login-container h1 {
             margin-bottom: 1rem;
             font-size: 1.5rem;
             color: #333;
         }
-        .form-group {
+        .group {
+            display: flex;
+            line-height: 30px;
+            align-items: center;
+            position: relative;
             margin-bottom: 1rem;
-            text-align: left;
         }
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: #555;
-        }
-        .form-group input {
+        .input {
             width: 100%;
-            padding: 0.8rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-            box-sizing: border-box;
-            transition: border-color 0.5s ease;
-        }
-        .form-group input:focus {
-            border-color: #6200ea;
+            height: 45px;
+            line-height: 30px;
+            padding: 0 5rem;
+            padding-left: 3rem;
+            border: 2px solid transparent;
+            border-radius: 10px;
             outline: none;
-            box-shadow: 0 0 4px rgba(98, 0, 234, 0.3);
+            background-color: #f8fafc;
+            color: #0d0c22;
+            transition: .5s ease;
+            
+        }
+        .input::placeholder {
+            color: #94a3b8;
+        }
+        .input:focus, .input:hover {
+            outline: none;
+            border-color: rgba(98, 0, 234);
+            background-color: #fff;
+            box-shadow: 0 0 0 5px rgb(129 140 248 / 30%);
+        }
+        .icon {
+            position: absolute;
+            left: 1rem;
+            fill: none;
+            width: 1rem;
+            height: 1rem;
+            top: 50%; /* Moves the icon to the vertical center of the container */
+            transform: translateY(-50%);
         }
         .login-button {
             width: 100%;
@@ -94,11 +109,18 @@
     <div class="login-container">
         <h1>DayScope</h1>
         <form id="loginForm">
-            <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username">
-                <label for="username">Password</label>
-                <input type="password" id="password" name="password">
+            <div class="group">
+                <svg stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                    <path d="M12 12c3.315 0 6-2.685 6-6s-2.685-6-6-6-6 2.685-6 6 2.685 6 6 6zm0 1c-4.142 0-12 2.072-12 6v2h24v-2c0-3.928-7.858-6-12-6z"></path>
+                  </svg>
+                  <input class="input" type="text" placeholder="Username">
+              </div>
+              
+            <div class="group">
+                <svg stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                    <path d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" stroke-linejoin="round" stroke-linecap="round"></path>
+                </svg>
+                <input class="input" type="password" id="password" placeholder="Password">
             </div>
             <button type="submit" class="login-button">Login</button>
             <div class="error" id="errorMessage"></div>
@@ -110,7 +132,7 @@
         particlesJS('particles-js', {
             particles: {
                 number: { 
-                    value: 70, 
+                    value: 40, 
                 },
                 color: { value: "#6200ea" },
                 shape: {
@@ -124,7 +146,7 @@
                 },
                 line_linked: {
                     enable: true,
-                    distance: 130, 
+                    distance: 140, 
                     color: "#6200ea",
                     opacity: 0.5,
                     width: 1.5,
@@ -158,8 +180,8 @@
         loginForm.addEventListener('submit', function(event) {
             event.preventDefault();
 
-            const username = document.getElementById('username').value.trim();
-            const password = document.getElementById('password').value.trim();
+            const username = usernameInput.value.trim();
+            const password = passwordInput.value.trim();
 
             if (username && password) {
                 alert(`Username: ${username}, Password: ${password}`);
