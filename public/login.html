@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>Login to DayScope</title>
     <script src="https://cdn.jsdelivr.net/npm/particles.js"></script>
     <style>
@@ -94,16 +95,43 @@
             font-size: 0.9rem;
             margin-top: 0.5rem;
         }
+        .notification {
+            position: fixed;
+            top: -80px; /* Start position above the screen */
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333; /* Dark background for the toast */
+            color: white;
+            padding: 14px 24px;
+            border-radius: 25px; /* Rounded corners for Android-like toast */
+            font-size: 16px;
+            opacity: 0;
+            visibility: hidden;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.3);
+            transition: top 0.5s ease, opacity 0.5s ease, visibility 0s linear 0.5s;
+            z-index: 9999;
+        }
+
+        .notification.show {
+            visibility: visible;
+            top: 20px; /* Slide into view */
+            opacity: 1;
+            transition: top 0.5s ease, opacity 0.5s ease;
+        }
     </style>
 </head>
 <body>
     <div id="particles-js"></div>
 
+    <div id="notification" class="notification">
+        This is an Android-style toast notification!
+    </div>
+
     <div class="login-container">
         <h1>DayScope</h1>
         <form id="loginForm">
             <div class="group">
-                  <input class="input" type="text" placeholder="Username">
+                  <input class="input" type="text" id="username" placeholder="Username">
               </div>
               
             <div class="group">
@@ -115,7 +143,6 @@
     </div>
 
     <script>
-        // Initialize particles.js
         particlesJS('particles-js', {
             particles: {
                 number: { 
@@ -159,6 +186,15 @@
             retina_detect: true,
         });
 
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 7000);
+        }
+
         const loginForm = document.getElementById('loginForm');
         const errorMessage = document.getElementById('errorMessage');
         const usernameInput = document.getElementById('username');
@@ -171,10 +207,25 @@
             const password = passwordInput.value.trim();
 
             if (username && password) {
-                alert(`Username: ${username}, Password: ${password}`);
                 errorMessage.textContent = '';
+                axios.post('/v1/login/auth', {
+                    username: username,
+                    password: password
+                })
+                .then((response) => {
+                    console.log('API Response:', response.data);
+                })
+                .catch((error) => {
+                    if (error.response && error.response.status === 401) {
+                    errorMessage.textContent = 'Incorrect Password.';
+                } else {
+                    console.error('API Request Error:', error);
+                    errorMessage.textContent = 'An error occured.';
+                    showNotification('An internal server error occured.')
+                }
+                });
             } else {
-                errorMessage.textContent = 'Please enter both a username and password.';
+                errorMessage.textContent = 'Please enter a username and password.';
             }
         });
     </script>
