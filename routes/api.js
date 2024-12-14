@@ -1,26 +1,26 @@
 const express = require('express');
+const authenticate = require('./auth'); // Adjust path if needed
+
 const router = express.Router();
 
-router.all(['/v1/api/status', '/v1/api/data'], (req, res, next) => {
-
-    if (req.method !== 'GET') {
-        return res.status(403).json({ message: 'Method Not Allowed' });
-    }
-
-    const apiKey = req.headers['api_token'];
-    if (!apiKey || apiKey !== process.env.API_KEY) {
-        return res.status(403).json({ message: '403 Forbidden' });
-    }
-
-    next();
-});
+router.use(['/v1/api/status', '/v1/api/data', '/auth/v1'], authenticate);
 
 router.get('/v1/api/status', (req, res) => {
     res.json({ status: 'API is up and running' });
 });
 
-router.get('/v1/api/data', (req, res) => {
-    res.json({ status: 'data :o' });
+router.post('/v1/login/auth', (req, res) => {
+    const { username, password } = req.body;
+
+    console.log("username: ", username);
+    console.log("password: ", password)
+    
+    const response = {
+        message: 'This is the new feature endpoint with authentication!',
+        timestamp: new Date(),
+    };
+
+    res.json(response);
 });
 
 module.exports = router;

@@ -39,6 +39,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(api);
 
@@ -135,8 +136,8 @@ app.listen(port, '0.0.0.0', () => {
         }
     });
 
-    const selectAllFromSystemInfo = 'SELECT * FROM users;';
-    queryDatabase(selectAllFromSystemInfo);
+    //const selectAllFromSystemInfo = 'SELECT * FROM users;';
+    //queryDatabase(selectAllFromSystemInfo);
 
     if (sendStartup === true) {
         const notificationData = {
