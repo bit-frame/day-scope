@@ -52,7 +52,7 @@ app.get('/exp/toast', (req, res) => { res.sendFile(path.join(__dirname, 'public'
 app.get('/api', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'apicall.html')); });
 app.get('/onboarding', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'onboarding', 'onboarding.html')); });
 app.get('/login', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'login.html')); });
-app.get('/dashboard', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'dashboard', 'dashboard.html')); });
+app.get('/staff/dashboard', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'dashboard', 'dashboard.html')); });
 app.use((req, res) => { res.status(404).sendFile(path.join(__dirname, 'public', '404.html')); });
 
 app.listen(port, '0.0.0.0', () => {
