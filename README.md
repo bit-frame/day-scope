@@ -1,5 +1,6 @@
 # DayScope
-[![Version](https://img.shields.io/badge/DayScope-2024.12-blue)](https://github.com/bit-frame/day-scope/releases/tag/v2024.12)
+[![Version](https://img.shields.io/badge/Current_DayScope_Version-2024.12_Build_2-blue)](https://github.com/bit-frame/day-scope/releases/tag/v2024.12)
+[![Version](https://img.shields.io/badge/View_Current_Announcement-green)](https://github.com/bit-frame/day-scope/releases/tag/v2024.12)
 
 # Installing DayScope (Beta)
 To get started, clone this repository to your server
