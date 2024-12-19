@@ -50,10 +50,8 @@ const validateSession = (sessionId, callback) => {
             console.error('[ERROR] Failed to validate session:', err.message);
             callback(false); // Invalid session in case of an error
         } else if (results.length > 0) {
-            console.log('[INFO] Session is valid');
             callback(true); // Session is valid and active
         } else {
-            console.log('[INFO] Session is invalid or expired');
             callback(false); // Invalid or expired session
         }
     });
