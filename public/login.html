@@ -213,13 +213,14 @@
                     password: password
                 })
                 .then((response) => {
-                    console.log('API Response:', response.data);
+                    const { success, message, clientIp, sessionToken } = response.data
+                    console.log(success, message, clientIp)
                 })
                 .catch((error) => {
                     if (error.response && error.response.status === 401) {
                     errorMessage.textContent = 'Incorrect Password.';
                 } else {
-                    console.error('API Request Error:', error);
+                    console.error('An internal server error occured. Check system logs for more information.');
                     errorMessage.textContent = 'An error occured.';
                     showNotification('An internal server error occured.')
                 }
@@ -228,6 +229,9 @@
                 errorMessage.textContent = 'Please enter a username and password.';
             }
         });
+
+        console.log("%cWARNING!", "color: red; font-size: 200%;"),
+        console.log("The browser console is a developer tool not intended for use by DayScope users. DO NOT copy and paste any code in this window.");
     </script>
 </body>
 </html>
