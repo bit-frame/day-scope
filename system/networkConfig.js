@@ -1,5 +1,5 @@
 const blacklistedIps = [
-    { ip: '10.0.0.252', reason: 'test' },
+    { ip: '10.0.0.222', reason: 'test' },
 ];
 
 const fullyBlacklistedIps = [
