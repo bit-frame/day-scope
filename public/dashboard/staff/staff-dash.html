@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>dayscope.dev</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Roboto', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f8f9fa; /* Light gray for a clean background */
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #343a40;
+            color: #fff;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            padding: 20px;
+            overflow-y: auto;
+            transition: width 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+            padding: 10px;
+        }
+
+        .sidebar.collapsed h2 {
+            display: none;
+        }
+
+        .sidebar nav ul li a:active {
+            background-color: #6c757d; /* Change background color when clicked */
+            color: #f8f9fa; /* Change text color */
+            transform: scale(0.97); /* Add a slight shrink effect */
+        }
+
+        .sidebar.collapsed nav ul li a {
+            justify-content: center;
+            text-align: center;
+        }
+
+        .sidebar.collapsed nav ul li a .material-icons {
+            margin-right: 0;
+            font-size: 24px;
+        }
+
+        .sidebar.collapsed nav ul li a .sidebar-text {
+            display: none; /* Hide text when sidebar is collapsed */
+        }
+
+        /* Remove Bullet Points and Default Spacing */
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.2s ease;
+        }
+
+        .sidebar nav ul li a .material-icons {
+            margin-right: 10px;
+            transition: margin 0.3s ease;
+        }
+
+        .sidebar nav ul li a:hover {
+            background-color: #495057;
+        }
+
+        /* Sidebar Text */
+        .sidebar nav ul li a .sidebar-text {
+            display: inline-block; /* Ensure visibility */
+            transition: opacity 0.3s ease; /* Smooth text transition */
+        }
+
+        /* Sidebar Header */
+        .sidebar-header {
+            display: flex;
+            justify-content: center; /* Aligns items horizontally */
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        /* Main Content Styling */
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .main-content.collapsed {
+            margin-left: 80px;
+        }
+
+        .topbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topbar h1 {
+            font-size: 18px;
+            margin: 0;
+            color: #343a40;
+        }
+
+        .topbar .account {
+            font-size: 28px;
+            cursor: pointer;
+            color: #343a40;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-left: auto;
+            transition: margin-left 0.3s ease;
+        }
+
+        .sidebar.collapsed .toggle-btn {
+            margin-left: 0;
+            justify-content: center;
+        }
+
+        .toggle-btn:hover {
+            color: #adb5bd;
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h5 {
+            color: #343a40;
+        }
+
+        .card p {
+            font-size: 24px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2>DayScope</h2>
+            <button class="toggle-btn" id="toggle-btn" data-bs-toggle="tooltip" data-bs-placement="right" title="Toggle Sidebar">
+                <span class="material-icons">menu</span>
+            </button>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Overview"><span class="material-icons">dashboard</span><span class="sidebar-text">Overview</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="My Classes"><span class="material-icons">class</span><span class="sidebar-text">My Classes</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Timetable"><span class="material-icons">calendar_today</span><span class="sidebar-text">Timetable</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Staff Notices"><span class="material-icons">announcement</span><span class="sidebar-text">Staff Notices</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="School Notices"><span class="material-icons">campaign</span><span class="sidebar-text">School Notices</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Upcoming Events"><span class="material-icons">event</span><span class="sidebar-text">Upcoming Events</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Student Attendance"><span class="material-icons">check_circle</span><span class="sidebar-text">Student Attendance</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="My Messages"><span class="material-icons">chat</span><span class="sidebar-text">My Messages</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Resource Library"><span class="material-icons">folder</span><span class="sidebar-text">Resource Library</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Student Reports"><span class="material-icons">analytics</span><span class="sidebar-text">Student Reports</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Manage Students"><span class="material-icons">manage_accounts</span><span class="sidebar-text">Manage Students</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Staff Portal"><span class="material-icons">person</span><span class="sidebar-text">Staff Portal</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Account Settings"><span class="material-icons">settings</span><span class="sidebar-text">Account Settings</span></a></li>
+                <li><a href="#" data-bs-toggle="tooltip" data-bs-placement="right" title="Admin Portal"><span class="material-icons">admin_panel_settings</span><span class="sidebar-text">Admin Portal</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+    <div class="main-content" id="main-content">
+        <header class="topbar">
+            <h1>Calamvale Community College</h1>
+            <div class="account material-icons">account_circle</div>
+        </header>
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card p-3">
+                        <h5>Children Attended Today</h5>
+                        <p>26</p>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card p-3">
+                        <h5>Children Absent Today</h5>
+                        <p>3</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const toggleBtn = document.getElementById("toggle-btn");
+        const sidebar = document.getElementById("sidebar");
+        const mainContent = document.getElementById("main-content");
+    
+        // Function to handle auto-minimize based on screen size
+        function handleSidebarCollapse() {
+            if (window.innerWidth <= 900) {
+                sidebar.classList.add("collapsed");
+                mainContent.classList.add("collapsed");
+                enableTooltips();
+            } else {
+                sidebar.classList.remove("collapsed");
+                mainContent.classList.remove("collapsed");
+                disableTooltips();
+            }
+        }
+
+        function enableTooltips() {
+            const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(tooltip => {
+                new bootstrap.Tooltip(tooltip);
+            });
+        }
+
+        function disableTooltips() {
+            const tooltips = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+            tooltips.forEach(tooltip => {
+                const tooltipInstance = bootstrap.Tooltip.getInstance(tooltip);
+                if (tooltipInstance) {
+                    tooltipInstance.dispose();
+                }
+            });
+        }
+    
+        window.addEventListener("resize", handleSidebarCollapse);
+    
+        handleSidebarCollapse();
+    
+        toggleBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("collapsed");
+            mainContent.classList.toggle("collapsed");
+    
+            if (sidebar.classList.contains("collapsed")) {
+                enableTooltips();
+            } else {
+                disableTooltips();
+            }
+        });
+    
+        document.addEventListener("DOMContentLoaded", function () {
+            if (sidebar.classList.contains("collapsed")) {
+                enableTooltips();
+            }
+        });
+    </script>
+</body>
+</html>

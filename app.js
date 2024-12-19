@@ -20,6 +20,41 @@ function queryDatabase(sqlQuery) {
     });
 }
 
+const createSession = (userId, sessionId, expiresAt) => {
+    const createSessionQuery = `
+    INSERT INTO sessions (session_id, user_id, expires_at)
+    VALUES (?, ?, ?)
+    `;
+
+    database.query(createSessionQuery, [sessionId, userId, expiresAt], (err) => {
+        if (err) {
+            console.error('[ERROR] Failed to create session:', err.message);
+        } else {
+            console.log('[INFO] Session created successfully for user:', userId);
+        }
+    });
+};
+
+const validateSession = (sessionId, callback) => {
+    const validateSessionQuery = `
+    SELECT * FROM sessions WHERE session_id = ? AND expires_at > NOW()
+    `;
+    
+    database.query(validateSessionQuery, [sessionId], (err, results) => {
+        if (err) {
+            console.error('[ERROR] Failed to validate session:', err.message);
+            callback(false); // Invalid session in case of an error
+        } else if (results.length > 0) {
+            console.log('[INFO] Session is valid:', results[0]);
+            callback(true); // Session is valid
+        } else {
+            console.log('[INFO] Session is invalid or expired');
+            callback(false); // Invalid or expired session
+        }
+    });
+};
+
+
 const configFile = fs.readFileSync('config.yaml', 'utf8');
 const config = yaml.parse(configFile);
 
@@ -88,6 +123,37 @@ app.listen(port, '0.0.0.0', () => {
             console.log('[INFO] System Info table loaded')
         }
     })
+
+    const createSessionsTable = `
+    CREATE TABLE IF NOT EXISTS sessions (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        session_id VARCHAR(255) NOT NULL UNIQUE,
+        user_id INT NOT NULL,
+        expires_at TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    );
+    `;
+
+    database.query(createSessionsTable, (err) => {
+        if (err) {
+            console.error('[ERROR] Failed to create sessions table:', err.message);
+        } else {
+            console.log('[INFO] Sessions table loaded');
+        }
+    });
+
+    setInterval(() => {
+        const cleanupQuery = `DELETE FROM sessions WHERE expires_at < NOW()`;
+        database.query(cleanupQuery, (err, result) => {
+            if (err) {
+                console.error('[ERROR] Failed to clean up expired sessions:', err.message);
+            } else {
+                console.log(`[INFO] Cleaned up ${result.affectedRows} expired session(s).`);
+            }
+        });
+    }, 7 * 24 * 60 * 60 * 1000);
     
     let username = config.administrator.user;
     let password = config.administrator.password;
