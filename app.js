@@ -28,10 +28,11 @@ function blockBlacklistedIp(req, res, next) {
     const blacklistedIp = fullyBlacklistedIps.find(entry => entry.ip === clientIp);
 
     if (blacklistedIp) {
+        console.log(`[WARN] Blacklisted IP (${clientIp}) attempted to access DayScope. Blocked request.`)
         return res.status(403).send(`
             <html>
         <head>
-          <title>Access Denied</title>
+          <title>DayScope: Access Denied</title>
           <style>
             body {
               font-family: Arial, sans-serif;
@@ -59,7 +60,7 @@ function blockBlacklistedIp(req, res, next) {
         <body>
           <div class="message">
             <h1>Your IP is Blacklisted</h1>
-            <p>Your IP (${clientIp}) has been blacklisted for the following reason:</p>
+            <p>Your IP (${clientIp}) has been blacklisted from DayScope for the following reason:</p>
             <p><strong>${blacklistedIp.reason}</strong></p>
             <p>Please consult your I.T. admin for further assistance.</p>
           </div>

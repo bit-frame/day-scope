@@ -27,7 +27,7 @@ function blockBlacklistedIp(req, res, next) {
 
     if (blacklistedIp) {
         // If the IP is blacklisted, return a 403 Forbidden error with the reason
-        console.log(`[WARN] Blacklisted IP (${clientIp}) attempted to access protected API endpoint. Blocked request.`)
+        console.log(`[WARN] Blacklisted IP (${clientIp}) attempted to access API endpoint. Blocked request.`)
         return res.status(403).json({
             success: false,
             message: `Your IP has been blacklisted. Reason: ${blacklistedIp.reason}`,
