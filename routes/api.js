@@ -6,7 +6,7 @@ const connection = require('../database/db')
 const functions = require('./function')
 const { blacklistedIps } = require('../system/networkConfig')
 
-router.use(['/v1/api/status', '/v1/api/data', '/auth/v1'], authenticate);
+router.use(['/v1/api/data', '/auth/v1'], authenticate);
 
 function queryDatabase(sqlQuery, callback) {
     connection.query(sqlQuery, (err, result) => {
@@ -29,9 +29,7 @@ function blockBlacklistedIp(req, res, next) {
         // If the IP is blacklisted, return a 403 Forbidden error with the reason
         console.log(`[WARN] Blacklisted IP (${clientIp}) attempted to access API endpoint. Blocked request.`)
         return res.status(403).json({
-            success: false,
             message: `Your IP has been blacklisted. Reason: ${blacklistedIp.reason}`,
-            clientIp: clientIp,
         });
 
     }
@@ -59,7 +57,7 @@ const createSession = (userId, sessionId, expiryDays = 7) => {
 };
 
 
-router.get('/v1/api/status', (req, res) => {
+router.get('/v1/api/status', blockBlacklistedIp, (req, res) => {
     res.json({ status: 'API is up and running' });
 });
 
