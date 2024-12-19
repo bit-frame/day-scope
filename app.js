@@ -4,6 +4,7 @@ const path = require('path');
 const yaml = require('yaml');
 const fs = require('fs');
 const api = require('./routes/api');
+const functions = require('./routes/function')
 const cors = require('cors');
 const sendWebhook = require('./webhook');
 const database = require('./database/db');
@@ -20,7 +21,11 @@ function queryDatabase(sqlQuery) {
     });
 }
 
-const createSession = (userId, sessionId, expiresAt) => {
+const createSession = (userId, sessionId, expiryDays = 7) => {
+    // Default to 7 days if no expiryDays is provided
+    const expiresAt = new Date();
+    expiresAt.setDate(expiresAt.getDate() + expiryDays);  // Add expiryDays to the current date
+
     const createSessionQuery = `
     INSERT INTO sessions (session_id, user_id, expires_at)
     VALUES (?, ?, ?)
@@ -39,21 +44,20 @@ const validateSession = (sessionId, callback) => {
     const validateSessionQuery = `
     SELECT * FROM sessions WHERE session_id = ? AND expires_at > NOW()
     `;
-    
+
     database.query(validateSessionQuery, [sessionId], (err, results) => {
         if (err) {
             console.error('[ERROR] Failed to validate session:', err.message);
             callback(false); // Invalid session in case of an error
         } else if (results.length > 0) {
-            console.log('[INFO] Session is valid:', results[0]);
-            callback(true); // Session is valid
+            console.log('[INFO] Session is valid');
+            callback(true); // Session is valid and active
         } else {
             console.log('[INFO] Session is invalid or expired');
             callback(false); // Invalid or expired session
         }
     });
 };
-
 
 const configFile = fs.readFileSync('config.yaml', 'utf8');
 const config = yaml.parse(configFile);
@@ -126,13 +130,13 @@ app.listen(port, '0.0.0.0', () => {
 
     const createSessionsTable = `
     CREATE TABLE IF NOT EXISTS sessions (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        session_id VARCHAR(255) NOT NULL UNIQUE,
-        user_id INT NOT NULL,
-        expires_at TIMESTAMP NOT NULL,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    session_id VARCHAR(255) NOT NULL UNIQUE,
+    user_id INT NOT NULL,
+    expires_at TIMESTAMP NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
     );
     `;
 
@@ -150,10 +154,12 @@ app.listen(port, '0.0.0.0', () => {
             if (err) {
                 console.error('[ERROR] Failed to clean up expired sessions:', err.message);
             } else {
-                console.log(`[INFO] Cleaned up ${result.affectedRows} expired session(s).`);
+                if (result.affectedRows == 0) {} else {
+                    console.log(`[INFO] Cleaned up ${result.affectedRows} expired session(s).`);
+                }
             }
         });
-    }, 7 * 24 * 60 * 60 * 1000);
+    }, 10 * 1000);
     
     let username = config.administrator.user;
     let password = config.administrator.password;
@@ -223,4 +229,8 @@ app.listen(port, '0.0.0.0', () => {
     } else {
         console.log('[INFO] Failed to send Startup notification: Disabled');
     }
+    const userId = 1;
+    const sessionId = functions.generateSessionId()
+    const expiry = 1;
+    //createSession(userId, sessionId, expiry)
 });
