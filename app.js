@@ -10,6 +10,7 @@ const sendWebhook = require('./webhook');
 const database = require('./database/db');
 const { create } = require('domain');
 const connection = require('./database/db')
+const { fullyBlacklistedIps } = require('./system/networkConfig')
 
 function queryDatabase(sqlQuery) {
     connection.query(sqlQuery, (err, result) => {
@@ -19,6 +20,54 @@ function queryDatabase(sqlQuery) {
         }
         console.log('[INFO] Query completed:', result);
     });
+}
+
+function blockBlacklistedIp(req, res, next) {
+    const clientIp = req.ip;
+
+    const blacklistedIp = fullyBlacklistedIps.find(entry => entry.ip === clientIp);
+
+    if (blacklistedIp) {
+        return res.status(403).send(`
+            <html>
+        <head>
+          <title>Access Denied</title>
+          <style>
+            body {
+              font-family: Arial, sans-serif;
+              background-color: #f8d7da;
+              color: #721c24;
+              text-align: center;
+              padding: 50px;
+            }
+            h1 {
+              font-size: 36px;
+            }
+            p {
+              font-size: 18px;
+              margin-bottom: 20px;
+            }
+            .message {
+              background-color: #f5c6cb;
+              border: 1px solid #f1b0b7;
+              border-radius: 5px;
+              padding: 20px;
+              display: inline-block;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="message">
+            <h1>Your IP is Blacklisted</h1>
+            <p>Your IP (${clientIp}) has been blacklisted for the following reason:</p>
+            <p><strong>${blacklistedIp.reason}</strong></p>
+            <p>Please consult your I.T. admin for further assistance.</p>
+          </div>
+        </body>
+      </html>
+        `);
+    }
+    next();
 }
 
 const createSession = (userId, sessionId, expiryDays = 7) => {
@@ -79,6 +128,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(api);
+app.use(blockBlacklistedIp);
 
 app.get('/', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'home.html')); });
 app.get('/home', (req, res) => { res.sendFile(path.join(__dirname, 'public', 'about.html')); });
