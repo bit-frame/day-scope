@@ -21,8 +21,6 @@ function queryDatabase(sqlQuery, callback) {
 
 function blockBlacklistedIp(req, res, next) {
     const clientIp = req.ip;  // Assuming Express gives you the IP in req.ip
-
-    // Check if the client's IP is in the blacklist
     const blacklistedIp = blacklistedIps.find(entry => entry.ip === clientIp);
 
     if (blacklistedIp) {
