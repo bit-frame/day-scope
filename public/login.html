@@ -213,8 +213,12 @@
                     password: password
                 })
                 .then((response) => {
-                    const { success, message, clientIp, sessionToken } = response.data
-                    console.log(success, message, clientIp)
+                    const { success, message, newToken, userId, clientIp } = response.data
+                    if (success) {
+                        localStorage.setItem("DayScopeToken", newToken)
+                        console.warn("set new session token")
+                    }
+                    console.log(success, message, newToken, userId, clientIp)
                 })
                 .catch((error) => {
                     if (error.response && error.response.status === 401) {
