@@ -31,7 +31,7 @@ function blockBlacklistedIp(req, res, next) {
     const blacklistedIp = fullyBlacklistedIps.find(entry => entry.ip === clientIp);
 
     if (blacklistedIp) {
-        logger.info(`Blacklisted IP (${clientIp}) attempted to access DayScope. Blocked request.`)
+        logger.warn(`Blacklisted IP (${clientIp}) attempted to access DayScope. Blocked request.`)
         return res.status(403).send(`
             <html>
         <head>

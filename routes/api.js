@@ -6,15 +6,17 @@ const connection = require('../database/db')
 const functions = require('./function')
 const { blacklistedIps } = require('../system/networkConfig')
 const createRateLimiter = require('./ratelimits/main')
+const { initializeLogger } = require('../log')
+const logger = initializeLogger();
 
-const loginRateLimiter = createRateLimiter(60000, 5);
+const loginRateLimiter = createRateLimiter(60000, 10);
 
 router.use(['/v1/api/data', '/auth/v1'], authenticate);
 
 function queryDatabase(sqlQuery, callback) {
     connection.query(sqlQuery, (err, result) => {
         if (err) {
-            console.error('[ERROR] Login Query failed:', err.message);
+            logger.error('Login Query failed:', err.message);
             callback(err, null);
             return;
         }
@@ -28,7 +30,7 @@ function blockBlacklistedIp(req, res, next) {
 
     if (blacklistedIp) {
         // If the IP is blacklisted, return a 403 Forbidden error with the reason
-        console.log(`[WARN] Blacklisted IP (${clientIp}) attempted to access API endpoint. Blocked request.`)
+        logger.warn(`Blacklisted IP (${clientIp}) attempted to access API endpoint. Blocked request.`)
         return res.status(403).json({
             message: `Your IP has been blacklisted. Reason: ${blacklistedIp.reason}`,
         });
@@ -50,9 +52,9 @@ const createSession = (userId, sessionId, expiryDays = 7) => {
 
     connection.query(createSessionQuery, [sessionId, userId, expiresAt], (err) => {
         if (err) {
-            console.error('[ERROR] Failed to create session:', err.message);
+            logger.error('Failed to create session:', err.message);
         } else {
-            console.log('[INFO] New session created for userId:', userId);
+            logger.info('New session created for userId:', userId);
         }
     });
 };
@@ -72,7 +74,7 @@ router.post('/v1/login/auth', blockBlacklistedIp, loginRateLimiter, (req, res) =
     // Define sqlQuery2 to get the user ID after successful login
     const sqlQuery2 = `SELECT id FROM users WHERE username = '${username}' AND password = '${password}'`;
 
-    console.log(`[INFO] New login request from ${clientIp} for user account: ${username}`);
+    logger.info(`New login request from ${clientIp} for user account: ${username}`);
 
     // Query the database with sqlQuery
     queryDatabase(sqlQuery, (err, result) => {
