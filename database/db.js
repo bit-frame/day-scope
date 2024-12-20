@@ -5,6 +5,8 @@ const configFile = fs.readFileSync('config.yaml', 'utf8');
 const config = yaml.parse(configFile);
 
 const { database } = config;
+const { initializeLogger } = require('../log')
+const logger = initializeLogger();
 
 const connection = mysql.createConnection({
     host: 'localhost',
@@ -15,10 +17,10 @@ const connection = mysql.createConnection({
 
 connection.connect((err) => {
     if (err) {
-        console.log('[ERROR] Error connecting to MySQL:', err.message);
+        logger.error('Error connecting to MySQL:', err.message);
         return;
     }
-    console.log('[INFO] Connected to DayScope Database');
+    logger.info('Connected to DayScope Database');
 });
 
 module.exports = connection;

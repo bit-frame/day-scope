@@ -12,13 +12,16 @@ const { create } = require('domain');
 const connection = require('./database/db')
 const { fullyBlacklistedIps } = require('./system/networkConfig')
 
+const { initializeLogger } = require('./log')
+const logger = initializeLogger();
+
 function queryDatabase(sqlQuery) {
     connection.query(sqlQuery, (err, result) => {
         if (err) {
-            console.error('[ERROR] Query failed:', err.message);
+            logger.error('Query failed:', err.message);
             throw err;
         }
-        console.log('[INFO] Query completed:', result);
+        logger.info('Query completed:', result);
     });
 }
 
@@ -28,7 +31,7 @@ function blockBlacklistedIp(req, res, next) {
     const blacklistedIp = fullyBlacklistedIps.find(entry => entry.ip === clientIp);
 
     if (blacklistedIp) {
-        console.log(`[WARN] Blacklisted IP (${clientIp}) attempted to access DayScope. Blocked request.`)
+        logger.info(`Blacklisted IP (${clientIp}) attempted to access DayScope. Blocked request.`)
         return res.status(403).send(`
             <html>
         <head>
@@ -83,9 +86,9 @@ const createSession = (userId, sessionId, expiryDays = 7) => {
 
     database.query(createSessionQuery, [sessionId, userId, expiresAt], (err) => {
         if (err) {
-            console.error('[ERROR] Failed to create session:', err.message);
+            logger.error('Failed to create session:', err.message);
         } else {
-            console.log('[INFO] Session created successfully for user:', userId);
+            logger.info('Session created successfully for user:', userId);
         }
     });
 };
@@ -97,7 +100,7 @@ const validateSession = (sessionId, callback) => {
 
     database.query(validateSessionQuery, [sessionId], (err, results) => {
         if (err) {
-            console.error('[ERROR] Failed to validate session:', err.message);
+            logger.error('Failed to validate session:', err.message);
             callback(false); // Invalid session in case of an error
         } else if (results.length > 0) {
             callback(true); // Session is valid and active
@@ -144,8 +147,9 @@ app.get('/staff/dashboard', (req, res) => { res.sendFile(path.join(__dirname, 'p
 app.use((req, res) => { res.status(404).sendFile(path.join(__dirname, 'public', '404.html')); });
 
 app.listen(port, '0.0.0.0', () => {
-    console.log(`[INFO] DayScope Server ${dayscope.version} Build ${dayscope.build}\n[INFO] Current api version: ${dayscope.api_version}\n> Access at ${website.url}:${port}`);
-
+    logger.info(`DayScope Server ${dayscope.version} Build ${dayscope.build}`);
+    logger.info(`Current API version: ${dayscope.api_version}`)
+    logger.info(`Access DayScope at ${website.url}:${website.port}`)
     const createUsersTable = `
     CREATE TABLE IF NOT EXISTS users (
         id INT AUTO_INCREMENT PRIMARY KEY,
@@ -171,9 +175,9 @@ app.listen(port, '0.0.0.0', () => {
 
     database.query(createSystemTable, (err) => {
         if (err) {
-            console.error('[ERROR] Failed to create system_info table: ', err.message)
+            logger.error('Failed to create system_info table: ', err.message)
         } else {
-            console.log('[INFO] System Info table loaded')
+            logger.info('System Info table loaded')
         }
     })
 
@@ -191,9 +195,9 @@ app.listen(port, '0.0.0.0', () => {
 
     database.query(createSessionsTable, (err) => {
         if (err) {
-            console.error('[ERROR] Failed to create sessions table:', err.message);
+            logger.error('Failed to create sessions table:', err.message);
         } else {
-            console.log('[INFO] Sessions table loaded');
+            logger.info('Sessions table loaded');
         }
     });
 
@@ -201,10 +205,10 @@ app.listen(port, '0.0.0.0', () => {
         const cleanupQuery = `DELETE FROM sessions WHERE expires_at < NOW()`;
         database.query(cleanupQuery, (err, result) => {
             if (err) {
-                console.error('[ERROR] Failed to clean up expired sessions:', err.message);
+                logger.error('Failed to clean up expired sessions:', err.message);
             } else {
                 if (result.affectedRows == 0) {} else {
-                    console.log(`[INFO] Cleaned up ${result.affectedRows} expired session(s).`);
+                    logger.info(`Cleaned up ${result.affectedRows} expired session(s).`);
                 }
             }
         });
@@ -218,14 +222,14 @@ app.listen(port, '0.0.0.0', () => {
 
     database.query(createUsersTable, (err) => {
         if (err) {
-            console.error('[ERROR] Failed to create users table:', err.message);
+            logger.error('Failed to create users table:', err.message);
         } else {
-            console.log('[INFO] User Table Loaded');
+            logger.info('User Table Loaded');
             
             const checkUserQuery = 'SELECT * FROM users WHERE username = ?';
             database.query(checkUserQuery, [username], (err, results) => {
                 if (err) {
-                    console.error('[ERROR] Failed to check user existence:', err.message);
+                    logger.error('Failed to check user existence:', err.message);
                 } else {
                     if (results.length === 0) {
                         const insertUserQuery = `
@@ -234,9 +238,9 @@ app.listen(port, '0.0.0.0', () => {
                         `;
                         database.query(insertUserQuery, [username, password, email, role, name], (err) => {
                             if (err) {
-                                console.error('[ERROR] Failed to insert user:', err.message);
+                                logger.error('Failed to insert user:', err.message);
                             } else {
-                                console.log('[INFO] User account linked');
+                                logger.info('User account linked');
                             }
                         });
                     } else {
@@ -247,9 +251,9 @@ app.listen(port, '0.0.0.0', () => {
                         `;
                         database.query(updateUserQuery, [password, email, role, name, username], (err) => {
                             if (err) {
-                                console.error('[ERROR] Failed to update root credentials:', err.message);
+                                logger.error('Failed to update root credentials:', err.message);
                             } else {
-                                console.log('[INFO] Root user loaded');
+                                logger.info('Root user loaded');
                             }
                         });
                     }
@@ -270,13 +274,13 @@ app.listen(port, '0.0.0.0', () => {
         
         sendWebhook(notificationData)
             .then(() => {
-                console.log('[INFO] Startup notification sent');
+                logger.info('Startup notification sent');
             })
             .catch((err) => {
-                console.error('[ERROR] Failed to send Startup notification: ', err);
+                logger.error('Failed to send Startup notification: ', err);
             });
     } else {
-        console.log('[INFO] Failed to send Startup notification: Disabled');
+        logger.warn('Failed to send Startup notification: Disabled');
     }
     const userId = 1;
     const sessionId = functions.generateSessionId()
