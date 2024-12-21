@@ -86,7 +86,7 @@ const createSession = (userId, sessionId, expiryDays = 7) => {
 
     database.query(createSessionQuery, [sessionId, userId, expiresAt], (err) => {
         if (err) {
-            logger.error('Failed to create session:', err.message);
+            logger.error(`Failed to create session: ${err.message}`);
         } else {
             logger.info('Session created successfully for user:', userId);
         }
@@ -100,7 +100,7 @@ const validateSession = (sessionId, callback) => {
 
     database.query(validateSessionQuery, [sessionId], (err, results) => {
         if (err) {
-            logger.error('Failed to validate session:', err.message);
+            logger.error(`Failed to validate session: ${err.message}`);
             callback(false); // Invalid session in case of an error
         } else if (results.length > 0) {
             callback(true); // Session is valid and active
@@ -195,7 +195,7 @@ app.listen(port, '0.0.0.0', () => {
 
     database.query(createSessionsTable, (err) => {
         if (err) {
-            logger.error('Failed to create sessions table:', err.message);
+            logger.error(`Failed to create sessions table: ${err.message}`);
         } else {
             logger.info('Sessions table loaded');
         }
@@ -205,7 +205,7 @@ app.listen(port, '0.0.0.0', () => {
         const cleanupQuery = `DELETE FROM sessions WHERE expires_at < NOW()`;
         database.query(cleanupQuery, (err, result) => {
             if (err) {
-                logger.error('Failed to clean up expired sessions:', err.message);
+                logger.error(`Failed to clean up expired sessions: ${err.message}`);
             } else {
                 if (result.affectedRows == 0) {} else {
                     logger.info(`Cleaned up ${result.affectedRows} expired session(s).`);
