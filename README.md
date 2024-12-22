@@ -5,6 +5,7 @@
 [![Version](https://img.shields.io/badge/View_Current_Announcement-green)](https://github.com/bit-frame/day-scope/discussions/2)
 
 # Installing DayScope (Beta)
+Before we continue, the DayScope application is currently only available to run on linux. If you are a windows user, use WSL.
 To get started, run ``sudo apt update`` to update packages:
 ```
 sudo apt update
