@@ -193,27 +193,6 @@ app.listen(port, '0.0.0.0', () => {
     );
     `;
 
-    database.query(createSessionsTable, (err) => {
-        if (err) {
-            logger.error(`Failed to create sessions table: ${err.message}`);
-        } else {
-            logger.info('Sessions table loaded');
-        }
-    });
-
-    setInterval(() => {
-        const cleanupQuery = `DELETE FROM sessions WHERE expires_at < NOW()`;
-        database.query(cleanupQuery, (err, result) => {
-            if (err) {
-                logger.error(`Failed to clean up expired sessions: ${err.message}`);
-            } else {
-                if (result.affectedRows == 0) {} else {
-                    logger.info(`Cleaned up ${result.affectedRows} expired session(s).`);
-                }
-            }
-        });
-    }, 10 * 1000);
-    
     let username = config.administrator.user;
     let password = config.administrator.password;
     let email = config.administrator.email;
@@ -261,6 +240,27 @@ app.listen(port, '0.0.0.0', () => {
             });
         }
     });
+
+    database.query(createSessionsTable, (err) => {
+        if (err) {
+            logger.error(`Failed to create sessions table: ${err.message}`);
+        } else {
+            logger.info('Sessions table loaded');
+        }
+    });
+
+    setInterval(() => {
+        const cleanupQuery = `DELETE FROM sessions WHERE expires_at < NOW()`;
+        database.query(cleanupQuery, (err, result) => {
+            if (err) {
+                logger.error(`Failed to clean up expired sessions: ${err.message}`);
+            } else {
+                if (result.affectedRows == 0) {} else {
+                    logger.info(`Cleaned up ${result.affectedRows} expired session(s).`);
+                }
+            }
+        });
+    }, 10 * 1000);
 
     //const selectAllFromSystemInfo = 'SELECT * FROM users;';
     //queryDatabase(selectAllFromSystemInfo);
