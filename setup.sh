@@ -3,7 +3,7 @@
 echo "DayScope 2024.12 Build 2"
 echo "Starting setup. Please do not turn off this computer."
 
-sleep 2
+sleep 3
 
 sudo apt install -y nodejs -y
 sudo apt install -y npm -y
@@ -25,8 +25,6 @@ sudo mv run_dayscope.sh /usr/local/bin/run.dayscope
 echo ""
 echo ""
 echo "Initial setup complete. Access DayScope by running: run.dayscope"
-echo "Please configure the configuration script and start up DayScope to continue to onboarding."
-echo ""
-echo ""
+echo "Please configure the configuration script (config.yaml) and boot up DayScope to continue to onboarding."
 echo "For more information, go to github.com/bit-frame/day-scope"
 echo "Exiting... [DayScope Installer V1]"
