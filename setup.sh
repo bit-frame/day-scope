@@ -11,10 +11,9 @@ npm install
 sudo apt install -y mysql-server -y
 echo ""
 echo ""
-read -p "New database user (e.g. dayscope-root): " newUser
+read -p "New database user (recommended: dayscope-root): " newUser
 read -p "New user password (e.g. dayscope): " newPass
-echo ""
-echo ""
+
 sudo mysql -e "CREATE USER '$newUser'@'localhost' IDENTIFIED WITH mysql_native_password BY '$newPass';"
 sudo mysql -e "CREATE DATABASE dayscope;"
 sudo mysql -e "GRANT ALL PRIVILEGES ON dayscope.* TO '$newUser'@'localhost';"
