@@ -9,36 +9,19 @@ To get started, clone this repository to your server
 ```
 git clone https://github.com/bit-frame/day-scope.git
 ```
-Navigate to the ``DayScope`` directory and install the required packages
+Navigate to the ``DayScope`` directory and run the setup shell script as root. This script contains all required setup items, no other initial setup is required.
 ```
-npm install
+sudo sh setup.sh
 ```
-Next, navigate out of the ``DayScope`` directory and install ``MySQL``
+Follow the on-screen instructions to finish initial setup.
+
+Next, run DayScope using ``run.dayscope`` in the terminal:
 ```
-sudo apt install mysql-server
+run.dayscope
 ```
-Enter ``MySQL`` and create a user for DayScope. You will need to apply changes to the DayScope ``config.yaml`` script in ``database`` options.
-```
-sudo mysql
-use mysql;
-create user 'dayscope-root'@'localhost' identified by 'dayscope';
-grant all privileges on *.* to 'dayscope-root'@'localhost';
-ALTER USER 'dayscope-root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'dayscope';
-flush privileges;
-exit;
-```
-Next, create a database for DayScope. Everything in DayScope is stored locally on your server.
-First, login as ``dayscope-root`` or whatever you changed it to.
-```
-mysql -u dayscope-root -p
-create database dayscope;
-use dayscope;
-exit;
-```
-Everything has been configured. Extra configuration settings can be found in the ``config.yaml`` script.
-To start DayScope, run ``node app.js``
+Or using node:
 ```
 node app.js
 ```
-On first startup of DayScope, you will be redirected to an onboarding page to setup DayScope. Everything else is handled automatically.
+On the initial startup of DayScope, you will be redirected to an onboarding page to setup DayScope. Everything else is handled automatically.
 After completing onboarding, head over to ``/login`` to continue the setup process.
