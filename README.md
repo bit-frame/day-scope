@@ -5,7 +5,11 @@
 [![Version](https://img.shields.io/badge/View_Current_Announcement-green)](https://github.com/bit-frame/day-scope/discussions/2)
 
 # Installing DayScope (Beta)
-To get started, clone this repository to your server
+To get started, run ``sudo apt update`` to update packages:
+```
+sudo apt update
+```
+Then, clone this repository to your server
 ```
 git clone https://github.com/bit-frame/day-scope.git
 ```
