@@ -54,7 +54,7 @@ const createSession = (userId, sessionId, expiryDays = 7) => {
         if (err) {
             logger.error('Failed to create session:', err.message);
         } else {
-            logger.info('New session created for userId:', userId);
+            logger.info(`New session created for userId: ${userId}`);
         }
     });
 };
