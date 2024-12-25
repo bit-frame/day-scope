@@ -130,6 +130,7 @@ router.post('/v1/login/auth', blockBlacklistedIp, loginRateLimiter, (req, res) =
             res.status(401).json(response); // 401 Unauthorized status
         }
     });
+    
 });
 
 

@@ -285,5 +285,5 @@ app.listen(port, '0.0.0.0', () => {
     const userId = 1;
     const sessionId = functions.generateSessionId()
     const expiry = 1;
-    //createSession(userId, sessionId, expiry)
+    //createSession(userId, sessionId, expiry) 
 });
