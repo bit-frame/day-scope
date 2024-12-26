@@ -1,22 +1,24 @@
 {
-  "name": "dayscope",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "name": "DayScope",
+  "version": "2024.12.3",
+  "description": "DayScope is made to be a better version of school tracking applications. It is easier to use, has good UI, and is open source to be able to host it on a local setup.",
+  "main": "app.js",
   "scripts": {
+    "setup": "sudo sh setup.sh",
+    "dayscope": "node app.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bit-frame/DayScope.git"
+    "url": "git+https://github.com/bit-frame/day-scope.git"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "@bit-frame",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/bit-frame/DayScope/issues"
+    "url": "https://github.com/bit-frame/day-scope/issues"
   },
-  "homepage": "https://github.com/bit-frame/DayScope#readme",
+  "homepage": "https://github.com/bit-frame/day-scope#readme",
   "dependencies": {
     "axios": "^1.7.9",
     "cors": "^2.8.5",
