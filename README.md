@@ -1,5 +1,5 @@
 # DayScope
-[![Version](https://img.shields.io/badge/Current_DayScope_Version-2024.12_Build_2-blue)](https://github.com/bit-frame/day-scope/releases/tag/v2024.12)
+[![Version](https://img.shields.io/badge/Current_DayScope_Version-2024.12_Build_3-blue)](https://github.com/bit-frame/day-scope/releases/tag/v2024.12)
 [![Version](https://img.shields.io/badge/Go_to-DayScope_Dev-orange)](https://github.com/bit-frame/dayscope-dev)
 
 [![Version](https://img.shields.io/badge/View_Current_Announcement-green)](https://github.com/bit-frame/day-scope/discussions/2)
@@ -18,15 +18,19 @@ Navigate to the ``DayScope`` directory and run the setup shell script as root. T
 ```
 sudo sh setup.sh
 ```
+Or running it using npm:
+```
+npm run setup
+```
 Follow the on-screen instructions to finish initial setup.
 
 Next, run DayScope using ``run.dayscope`` in the terminal:
 ```
 run.dayscope
 ```
-Or using node:
+Or using npm:
 ```
-node app.js
+npm run dayscope
 ```
 On the initial startup of DayScope, you will be redirected to an onboarding page to setup DayScope. Everything else is handled automatically.
 After completing onboarding, head over to ``/login`` to continue the setup process.
