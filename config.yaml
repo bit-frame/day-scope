@@ -1,7 +1,7 @@
 dayscope:
   version: v2024.12
-  build: 2
-  api_version: v1.1
+  build: 3
+  api_version: v1.2
 
 website:
   url: ubuntulinus.local
