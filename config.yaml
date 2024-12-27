@@ -4,7 +4,7 @@ dayscope:
   api_version: v1.2
 
 website:
-  url: ubuntulinus.local
+  url: localhost
   port: 3000
 
 database:
