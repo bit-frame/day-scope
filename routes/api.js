@@ -1,53 +1,51 @@
 const express = require('express');
 const authenticate = require('./auth');
-const { getClientIp } = require('./function')
+const { getClientIp, generateSessionId } = require('./function');
 const router = express.Router();
-const connection = require('../database/db')
-const functions = require('./function')
-const { blacklistedIps } = require('../system/networkConfig')
-const createRateLimiter = require('./ratelimits/main')
-const { initializeLogger } = require('../log')
-const logger = initializeLogger();
+const connection = require('../database/db');
+const { blacklistedIps } = require('../system/networkConfig');
+const createRateLimiter = require('./ratelimits/main');
+const { initializeLogger } = require('../log');
 
+const logger = initializeLogger();
 const loginRateLimiter = createRateLimiter(60000, 10);
 
+// Middleware for authentication and blacklisted IP handling
 router.use(['/v1/api/data', '/auth/v1'], authenticate);
 
-function queryDatabase(sqlQuery, callback) {
-    connection.query(sqlQuery, (err, result) => {
-        if (err) {
-            logger.error('Login Query failed:', err.message);
-            callback(err, null);
-            return;
-        }
-        callback(null, result);
+function queryDatabase(sqlQuery, params = []) {
+    return new Promise((resolve, reject) => {
+        connection.query(sqlQuery, params, (err, result) => {
+            if (err) {
+                logger.error('Database query failed:', err.message);
+                return reject(err);
+            }
+            resolve(result);
+        });
     });
 }
 
 function blockBlacklistedIp(req, res, next) {
-    const clientIp = req.ip;  // Assuming Express gives you the IP in req.ip
+    const clientIp = req.ip;
     const blacklistedIp = blacklistedIps.find(entry => entry.ip === clientIp);
 
     if (blacklistedIp) {
-        // If the IP is blacklisted, return a 403 Forbidden error with the reason
-        logger.warn(`Blacklisted IP (${clientIp}) attempted to access API endpoint. Blocked request.`)
+        logger.warn(`Blacklisted IP (${clientIp}) attempted to access API endpoint. Blocked request.`);
         return res.status(403).json({
             message: `Your IP has been blacklisted. Reason: ${blacklistedIp.reason}`,
         });
-
     }
 
-    // If the IP is not blacklisted, continue to the next middleware or route handler
     next();
 }
-const createSession = (userId, sessionId, expiryDays = 7) => {
-    // Default to 7 days if no expiryDays is provided
+
+function createSession(userId, sessionId, expiryDays = 7) {
     const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + expiryDays);  // Add expiryDays to the current date
+    expiresAt.setDate(expiresAt.getDate() + expiryDays);
 
     const createSessionQuery = `
-    INSERT INTO sessions (session_id, user_id, expires_at)
-    VALUES (?, ?, ?)
+        INSERT INTO sessions (session_id, user_id, expires_at)
+        VALUES (?, ?, ?)
     `;
 
     connection.query(createSessionQuery, [sessionId, userId, expiresAt], (err) => {
@@ -57,81 +55,61 @@ const createSession = (userId, sessionId, expiryDays = 7) => {
             logger.info(`New session created for userId: ${userId}`);
         }
     });
-};
+}
 
-
+// API Routes
 router.get('/v1/api/status', blockBlacklistedIp, (req, res) => {
     res.json({ status: 'API is up and running' });
 });
 
-router.post('/v1/login/auth', blockBlacklistedIp, loginRateLimiter, (req, res) => {
+router.post('/v1/login/auth', blockBlacklistedIp, loginRateLimiter, async (req, res) => {
     const { username, password } = req.body;
     const clientIp = getClientIp(req);
 
-    // Define the SQL query to check user credentials
-    const sqlQuery = `SELECT * FROM users WHERE username = '${username}' AND password = '${password}'`;
-
-    // Define sqlQuery2 to get the user ID after successful login
-    const sqlQuery2 = `SELECT id FROM users WHERE username = '${username}' AND password = '${password}'`;
+    const sqlQuery = 'SELECT * FROM users WHERE username = ? AND password = ?';
+    const sqlQuery2 = 'SELECT id FROM users WHERE username = ? AND password = ?';
 
     logger.info(`New login request from ${clientIp} for user account: ${username}`);
 
-    // Query the database with sqlQuery
-    queryDatabase(sqlQuery, (err, result) => {
-        if (err) {
-            return res.status(500).json({
-                success: false,
-                message: 'Database query error',
-                clientIp: clientIp,
-            });
-        }
+    try {
+        const result = await queryDatabase(sqlQuery, [username, password]);
 
         if (result.length > 0) {
-            // After verifying the user, use sqlQuery2 to fetch the user ID
-            queryDatabase(sqlQuery2, (err2, result2) => {
-                if (err2) {
-                    return res.status(500).json({
-                        success: false,
-                        message: 'Database query error for user ID',
-                        clientIp: clientIp,
-                    });
-                }
+            const result2 = await queryDatabase(sqlQuery2, [username, password]);
 
-                if (result2.length > 0) {
-                    const userId = result2[0].id; // Get the user ID from sqlQuery2
-                    const newSessionToken = functions.generateSessionId();
-                    const expiry = 7;
-                    createSession(userId, newSessionToken, expiry)
-                    const response = {
-                        success: true,
-                        message: 'Login successful',
-                        newToken: newSessionToken,
-                        userId: userId, // Include user ID in the response
-                        clientIp: clientIp, // Optionally, include the IP in the response
-                    };
+            if (result2.length > 0) {
+                const userId = result2[0].id;
+                const newSessionToken = generateSessionId();
+                createSession(userId, newSessionToken);
 
-                    res.status(200).json(response);
-                } else {
-                    const response = {
-                        success: false,
-                        message: 'User ID not found',
-                        clientIp: clientIp, // Optionally, include the IP in the response
-                    };
-                    res.status(401).json(response); // 401 Unauthorized status
-                }
-            });
-        } else {
-            // Login failure, user not found
-            const response = {
+                return res.status(200).json({
+                    success: true,
+                    message: 'Login successful',
+                    newToken: newSessionToken,
+                    userId,
+                    clientIp,
+                });
+            }
+
+            return res.status(401).json({
                 success: false,
-                message: 'Invalid username or password',
-                clientIp: clientIp, // Optionally, include the IP in the response
-            };
-            res.status(401).json(response); // 401 Unauthorized status
+                message: 'User ID not found',
+                clientIp,
+            });
         }
-    });
-    
-});
 
+        res.status(401).json({
+            success: false,
+            message: 'Invalid username or password',
+            clientIp,
+        });
+    } catch (err) {
+        res.status(500).json({
+            success: false,
+            message: 'Database query error',
+            clientIp,
+        });
+    }
+});
 
 module.exports = router;
