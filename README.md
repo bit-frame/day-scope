@@ -5,7 +5,7 @@
 [![Version](https://img.shields.io/badge/View_Current_Announcement-green)](https://github.com/bit-frame/day-scope/discussions/2)
 
 # Installing DayScope using the Installer (Beta)
-Download the Installer from ``day-scope/installer/dayscope-util.deb`` or from here:
+Download the Installer from ``day-scope/installer/dayscope-util.deb`` or from [here](https://github.com/bit-frame/day-scope/blob/main/installer/dayscope-util.deb):
 ```
 https://github.com/bit-frame/day-scope/blob/main/installer/dayscope-util.deb
 ```
