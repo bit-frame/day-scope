@@ -4,7 +4,22 @@
 
 [![Version](https://img.shields.io/badge/View_Current_Announcement-green)](https://github.com/bit-frame/day-scope/discussions/2)
 
-# Installing DayScope (Beta)
+# Installing DayScope using the Installer (Beta)
+Download the Installer from ``day-scope/installer/dayscope-util.deb`` or from here:
+```
+https://github.com/bit-frame/day-scope/blob/main/installer/dayscope-util.deb
+```
+Add the DayScope installer to your linux server.
+Next, run ``sudo apt install ./dayscope-util.deb`` in the same directory as the debian file. This will install the utility.
+```
+sudo apt install ./dayscope-util.deb
+```
+After that, simply install the latest version of DayScope using ``install.dayscope`` and follow the instructions. No other things are needed.
+```
+install.dayscope
+```
+
+# Install DayScope using manual process
 Before we continue, the DayScope application is currently only available to run on linux. If you are a windows user, use WSL.
 To get started, run ``sudo apt update`` to update packages:
 ```
