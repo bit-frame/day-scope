@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "DayScope 2024.12 Build 2"
+echo "DayScope 2024.12 Build 4"
 echo "Starting setup. Please do not turn off this computer."
 
 sleep 3
